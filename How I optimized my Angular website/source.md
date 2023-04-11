@@ -1,193 +1,225 @@
 ## Introduction
 
-Building applications/websites with `Angular` always comes with a downside: **the bundle size**.
-The latter has a direct impact on the loading speed & the user experience of our projects.
+Building applications/websites using `Angular` has a downside - **the bundle size**. This directly affects the loading speed and user experience of our projects.
 
-![Angular bundle size](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nhxp0nujx68r66h83lm1.png)
+![Angular bundle size](https://i.ibb.co/gwpLFzP/huge-bundle-size.webp)
 
-Even if we finally reduced the bundle size, there are other boxes to check to have the ideal website.
+Reducing **the bundle size** is important, but there are other essential elements to consider for creating an ideal website.
 
-Personally, I have four steps to follow when building apps/websites.
+Personally, I follow a four-step process when building apps/websites:
 
-> 1. Designing
-> 2. Coding
-> 3. Making the website responsive
-> 4. Optimizing
+1.  Designing
+2.  Coding
+3.  Ensuring Responsiveness
+4.  Optimizing
 
-On this post, we will focus on the **last step**.
-
----
-
-## How I optimized my Angular website
-
-I'll start with the problems I've faced, then how I've addressed them.
-
-### 1 - Visual Problems
-
-The following [**link**](https://megapizza-angular-kxgk919qy-oubrdb.vercel.app/) is a showcase of my website after the **3rd** step.
-
-{% youtube DnfKq6yqgmA %}
-
-From this video, I can extract four visual problems :
-
-#### 1.1 - Visual problem 1
-
-The website looks broken for a split second, then loads ordinarily
-
-![Angular styles late loading](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/z1rbi7es3ffdijdjemd3.jpg)
-
-#### 1.2 - Visual problem 2 & 3
-
-The font took ages to load, same thing goes with the pizza picture
-
-![No font nor pizza picture](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jtueaqi6vr4lhpym6tfr.jpg)
-
-#### 1.3 - Visual problem 4
-
-The speed of loading images is super slow.
+In this post, we will focus on the **last step**.
 
 ---
 
-### 2 - Invisible problems
+## Getting started
 
-Let's open the dev-console and see what's happening under the hood.
+I'll start by discussing the problems I encountered and how I addressed them, including the steps I took to reduce the bundle size.
 
-{% youtube lCWXzLTTUNY %}
+### 1. Visual Problems
 
-I can take out two issues from this video
+The following **[link](https://megapizza-v3-91y77whep-brihoum.vercel.app/)** showcases my website after the **3rd step**.
 
-#### 2.1 - Invisible problem 1
+[![website](https://img.shields.io/badge/Vercel-Visit%20the%20website-green?style=for-the-badge&logo=vercel)](https://megapizza-v3-91y77whep-brihoum.vercel.app/)
 
-![dev-tools](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/f9c0byifiw5rjvz3fd4j.png)
+{% youtube 2UMDps3k3Qs %}
 
-The website took **4.57s** to fully load, with **98 requests** and **5.4 MB of resources**. To put those numbers into perspective, a 3g internet will take about ~24s to load all the resources.
+From this video, I can **identify** `3` visual problems :
 
-#### 2.2 - Invisible problem 2
+#### 1.1. Visual Problem 1
 
-![Broken loading tree](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/9zv8pa80qn6g7zambgdf.png)
+The website looks broken for a split second, then loads normally.
 
-The pizza picture took **~1.07s** (0.689s + 0.387s) to be displayed, this means the user was seeing a broken slider for 1 second. The same goes with the font.
+[![Angular styles late loading](https://i.ibb.co/S7fhcVB/broken-website.webp)](https://i.ibb.co/S7fhcVB/broken-website.webp)
 
-> You may ask : Why did he pick the pizza picture from all the other pictures ?
-> I'll answer you with another question :
-> What picture do you see first when you visit the website ?
+#### 1.2. Visual Problems 2 & 3
+
+The `font` took ages to load, the same thing goes with the `pizza picture` and the other more important resources
+
+[![No font for the pizza picture](https://i.ibb.co/7JYpLd7/slow-font-pizza-load.webp)](https://i.ibb.co/7JYpLd7/slow-font-pizza-load.webp)
+
+---
+
+### 2. Invisible problems
+
+Let's open the dev console and see what's happening under the hood.
+
+{% youtube kCETm6GuYmQ %}
+
+I can **identify** two issues from this video.
+
+#### 2.1. Invisible Problem 1
+
+[![dev-tools](https://i.ibb.co/JtT4v5Q/dev-tools.webp)](https://i.ibb.co/JtT4v5Q/dev-tools.webp)
+
+The website took **6.84s** to fully load, with **109 requests** and **4.4 MB of resources**. This happened because the website **loaded all its resources** from pages 1 to 5, including unnecessary ones.
+
+To put those numbers into perspective, it would take a **3G internet** connection about **~24s** to load all the resources.
+
+#### 2.2. Invisible Problem 2
+
+[![bad loading tree](https://i.ibb.co/Jr3LCGm/late-pizza-load.webp)](https://i.ibb.co/Jr3LCGm/late-pizza-load.webp)
+
+The website is loading resources that are **not needed initially**, before loading the necessary ones, **causing a delay** in rendering critical resources.
+
+For example :
+
+- The website first loaded all the used backgrounds, from page 1 to 5 (`number.3`).
+
+- Then, a picture located on page 4, which was not yet needed, was loaded (`number.4`).
+
+- Next, 7 other pictures located on page 2, also not yet needed, were loaded (`number.5`).
+
+- Lastly, **the most critical resource**, the `pizza picture` was loaded.
+
+So, the `pizza picture` took approximately **~2.129s** (`1.92s + 0.209s`) (`number.1 & 2`) to load, resulting in a broken slider being displayed to the user during this time.
+
+The same goes for the `font`.
+
+[![late font loading](https://i.ibb.co/ByVrDM3/late-font.webp)](https://i.ibb.co/ByVrDM3/late-font.webp)
+
+It was the last resource to load, taking approximately **~4.09s** (`1.72s + 2.37s`) to render.
+
+ℹ **Note:**
+
+You may ask: Why did he pick the `pizza picture` from all the pictures ❓
+
+I'll answer you with another question :
+
+What picture do you see first when you visit the website ❓
 
 ---
 
 ### Lighthouse Score
 
-![Lighthouse Score](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/wv6wx6ic6um0hz6q39v6.png)
+[![Lighthouse Score](https://i.ibb.co/xz7M9S8/lighthouse-0.webp)](https://i.ibb.co/xz7M9S8/lighthouse-0.webp)
 
-As I expected, the **LCP** (largest Contentful paint) and the **CLS** (Cumulative Layout Shift) are bad, because of [Invisible problem N°2](#invisible-problem-2) and [Visual problem N°1](#visual-problem-1) respectively, surprisingly the First Contentful Paint is good.
+As expected, the **LCP** (largest Contentful paint) and the **CLS** (Cumulative Layout Shift) are bad, due to the [Invisible Problem 2](#22-invisible-problem-2) and [Visual Problem 1](#11-visual-problem-1) respectively, surprisingly the **FCP** (First Contentful Paint) is decent.
 
 ### Bundle size
 
-![Bundle size](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/331z7rzri71pw6cu3mdx.png)
+[![Bundle size](https://i.ibb.co/Z1LmKs3/build-0.webp)](https://i.ibb.co/Z1LmKs3/build-0.webp)
 
-Not that bad, but we can do better.
+We can do much much better.
 
-ℹ️ **Note :** before explaining and fixing said problems, lets first **optimize** the bundle size.
-
----
-
-### Improving the bundle size
-
-Before starting, I would like to highlight something :
-
-- ⚠️ **Never** import third party CSS inside any of your Angular components, instead use `styles.css`.
+✳ **Before** explaining and fixing said problems, let's first **optimize** the bundle size.
 
 ---
 
-There are lots of ways on how to reduce the bundle size, but that's not the subject for today, here I'm showcasing how **'I'** optimized my `Angular` website.
+### Improving the bundle size 📉
 
-#### 1 - Lazy load
+I would like to highlight something before starting :
 
-The first thing I personally do is to **Lazy load _noncritical_ third party libraries**, this means libraries that are not required the second the website loads, therefore their load can be delayed until all the more important resources are loaded. I'll give you an example to clarify more :
+- ⚠️ **Never** import third-party styles (CSS/Sass...) inside any of your Angular components, instead use the global `styles.scss` file.
 
-- I have a plugin called [lightGallery](https://www.lightgalleryjs.com/), the latter is only required when a user wants to open an image gallery. Logically, we can delay its load until all of the website more critical resources (like the pizza picture & important CSS) are downloaded.
+There are many ways to reduce the bundle size, but that's not the focus of this article, here I will be showcasing how **'I'** optimized my `Angular` website.
 
-- I also have `Bootstrap` installed. Its `JavaScript` is only required when we need [interactivity](https://getbootstrap.com/docs/5.2/customize/optimize/#lean-javascript) in our project, like for example **:** Opening a modal, Using a collapse or a carousel… So we can delay its load too.
+#### 1. Lazy loading third-party libraries
 
-#### 1.1 - Lazy loading : LightGallery
+The first thing I personally do is to **Lazy Load _noncritical_ third-party libraries**. This means libraries that are **not required** the second the website loads, therefore their load **can be delayed** until all the more important resources are loaded and rendered. This reduces the main bundle size, which in turn improves the website's loading speed.
 
-In the following video, I'll explain in detail the process :
+I'll give some examples to clarify more :
 
-{% youtube Dyuhs_y1MZQ %}
+- I have a plugin called **[lightGallery](https://www.lightgalleryjs.com/)**, which is only needed when a user wants to open an image gallery. Logically, its load can be delayed until the more critical resources of the website (such as the pizza picture and important styles/fonts) are downloaded and rendered in the view.
 
-The code I used in the video :
+- I also have **[Bootstrap](https://getbootstrap.com/)** installed. its `JavaScript` is only required when we need **[interactivity](https://getbootstrap.com/docs/5.2/customize/optimize/#lean-javascript)** in our project, like for **example:** opening a modal, Using a collapse, a carousel… So we can delay its load too.
 
-```javascript
-// main.component.ts
-let src = "https://jsdelivr.com"
-window.onload = () => {
-  let script = document.createElement("script")
-  script.src = src
-  script.async = true
-  document.head.appendChild(script)
+That's the list of **non-critical third-party libraries** used by the website :
+
+- **[lightGallery](https://www.lightgalleryjs.com/)**.
+- **[Bootstrap](https://getbootstrap.com/)**.
+- **[node-snackbar](https://github.com/polonel/SnackBar)**
+- **[Popper.js](https://popper.js.org/)**
+- **[Wow.js](https://wowjs.uk/)**
+
+Here, in the video below, I'll explain how to lazy load them.
+
+{% youtube 7quStWqNwaw %}
+
+**⚠ Note:** I made a small mistake on the video ([1:30](https://youtu.be/7quStWqNwaw?t=90)), it should be
+
+> "input": "node_modules/wow.js/dist/wow.js",
+
+&
+
+> appendScript('wow.js');
+
+ℹ The code I used on the video :
+
+```typescript
+// app.component.ts
+function appendScript(name: string) {
+  let script = document.createElement("script");
+  script.src = name;
+  script.async = true;
+  document.head.appendChild(script);
 }
 ```
 
-#### 1.2 - Lazy loading Bootstrap
+To summarize 📝 :
 
-The same process goes with `Bootstrap`, remember `jsdelivr` ? Search for 'bootstrap' and :
+- We instructed `Angular` to load our scripts **as separate files** during the build and **not inject them**, so they can be `lazy-loaded`.
 
-![jsdelivr](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/6q2e8fih7zjs1ymn1j3c.png)
+- Then, we used `window.onload` event to load our scripts after the entire website, including its content such as images and styles, has loaded. This approach ensures that our scripts are the last resources to load.
 
-Copy the link and replace the old with the new one.
+##### 1.2. Bundle size
 
-![main.ts](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/go7dc4lev58gwdyra9ar.png)
+[![Bundle size 1](https://i.ibb.co/8P23JLN/build-1-1.webp)](https://i.ibb.co/8P23JLN/build-1-1.webp)
 
-ℹ️ Ps : `Remember to remove any other imported Bootstrap JavaScript`
+✅ Just like that, we eliminated (**163.02 kB**).
 
-![Bootstrap](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/v6umr63mpaa9mkmqukro.png)
+#### 2. Removing unused modules
 
-#### 1.3 - Bundle size
+This website has no routes, as it only contains a single page, even though the `RouterModule` is installed. We need to remove it because it's basically useless.
 
-![Bundle size](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/692sylxbmb3nwgurnel3.png)
+On the `app.module.ts` file, we remove `RouterModule` from the imports array:
 
-✅ Just like that, we eliminated (**125.01 kB**)
+[![app.module.ts](https://i.ibb.co/4JQD7TD/remove-angular-router.webp)](https://i.ibb.co/4JQD7TD/remove-angular-router.webp)
 
-### 2 - Removing unused modules
+##### 2.1. Bundle size
 
-My website is a `single-page website`, even though, `Angular routing` is installed. To fix this, all I need is to comment out `AppRoutingModule` on my `app.module.ts`
+[![Bundle size 2](https://i.ibb.co/zrNkGQX/build-2.webp)](https://i.ibb.co/zrNkGQX/build-2.webp)
 
-![app.module.ts](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2wmqjm3fs5uzrez5ua02.png)
+✅ We were able to eliminate (**75.85 kB**) by removing `RouterModule`.
 
-Now, I need to replace `<router-outlet></router-outlet>` with my parent component selector, which is `app-main`
+This means we eliminated a total of (**238.71 kB**) from the initial build.
 
-![app-main](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/zok1lxu2b3ij8yo06jku.png)
+▶ You can check the [website](https://megapizza-v3-2qq0b0oth-brihoum.vercel.app/) after reducing the bundle size.
 
-#### 2.1 - Bundle size
+[![website](https://img.shields.io/badge/Vercel-Visit%20the%20website-green?style=for-the-badge&logo=vercel)](https://megapizza-v3-2qq0b0oth-brihoum.vercel.app/)
 
-![Bundle size](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ph9fwqugp47q7hc9dhc0.png)
+#### Lighthouse Score
 
-✅ We eliminated a total of (**201.31 kB**) from the initial build.
+The website's Lighthouse score **has slightly improved**, but all the previously mentioned **issues still persist**. Therefore, we need to address them to optimize the website's performance further.
 
-You can check the [website](https://megapizza-angular-jfoncqyln-oubrdb.vercel.app/) after reducing the bundle size.
-
-About lighthouse, the score has improved a little, but the website still has all the problems mentioned earlier. **So, let's fix them**.
-
-![Lighthouse](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/svkeerlhg52qia6dq5hb.png)
+[![Lighthouse](https://i.ibb.co/5j9q23F/lighthouse-1.webp)](https://i.ibb.co/5j9q23F/lighthouse-1.webp)
 
 ---
 
-### Explaining [Visual problem N°1](#11-visual-problem-1)
+### Explaining [Visual Problem 1](#11-visual-problem-1)
 
-Like I mentioned before, this website uses `Bootstrap`, and `styles.css` contains `Bootstrap's` CSS. The reason of this problem is that `Angular` started printing the website before `styles.css` finished downloading, this means we had no stylesheet for `Bootstrap` until `styles.css` finished downloading.
+This website uses `Bootstrap` and `styles.css` contains `Bootstrap's` CSS and other **important styles**. The reason for this problem is that `Angular` started rendering the website before `styles.css` finished downloading, causing the page to be displayed without the necessary styles.
 
-![styles.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/pmgmlosxk6kr2o375ifw.png)
+[![styles.scss](https://i.ibb.co/CmXRgw9/scss.webp)](https://i.ibb.co/CmXRgw9/scss.webp)
 
-To confirm this, we can try to block `styles.css` from downloading at all and see if we have the same results.
+To verify this, we can test by blocking the download of `styles.css` completely and observe if we still get the same results :
 
-![styles.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/anyi0e46ugzsozh669z5.png)
+[![no styles.css](https://i.ibb.co/SK0br0x/no-styles.webp)](https://i.ibb.co/SK0br0x/no-styles.webp)
 
-ℹ And yea, the same result.
+Yes, we do.
 
 ---
 
-### Solving [Visual problem 1](#11-visual-problem-1)
+### Solving [Visual Problem 1](#11-visual-problem-1)
 
-To solve this problem, all my `critical` CSS needs to be ready when `Angular` start printing. Critical CSS means :
+To solve this issue, we need to ensure that all **critical CSS** is loaded before `Angular` starts rendering the website.
+
+**Critical CSS** means :
 
 > `The CSS responsible for the content that's immediately visible when we open a website`.
 
@@ -195,120 +227,158 @@ or :
 
 > `The CSS of the first page you see when opening a website`.
 
-In my case :
+How can we know ❓ well, watch the video below :
 
-- `Bootstrap's CSS`
-- `SiwperJS's CSS`.
+{% youtube OpEXgol3aKs %}
 
-But because I have buttons in the **first page** that are styled with some custom CSS, this CSS is also considered `critical`.
+So, we have as **critical** the following :
 
-![Buttons](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/yekpdjmv8fpabpv2ug5w.png)
+- `Bootstrap CSS`;
+- `SwiperJS CSS`;
+- `Custom CSS`;
+- `Animations`;
 
-Also, the `animation` I'm using on my website are considered `critical` too, the video below explains everything :
+**⚠ Note:** The `font` file is also critical, however, we will address it with [Visual Problems 2 & 3](#12-visual-problem-2-amp-3). This is because the font file contains `3` fonts, whereas the homepage requires only `1`. For now, we consider it non-critical.
 
-{% youtube ZTBRPR5cjVc %}
+And as **non-critical** :
 
-To resume, we have as `Critical` :
+- `Snackbar CSS`
+- `lightGallery CSS & its plugins`
+- `fonts file`
 
-> - `Bootstrap CSS`,
-> - `SwiperJS CSS`,
-> - `Custom CSS`,
-> - `Animations CSS`,
+Now, Instead of using a single file (like `styles.scss`) containing all styles, we can separate them based on their priority.
 
-Now, let's get back to work.
+We create two files: `pre_styles.scss` & `late_styles.scss` and import our **critical** and **non-critical** styles into them, respectively.
 
-First, I created a SCSS file named `bootstrap.scss`, and I imported inside it only the [Bootstrap component I need](https://getbootstrap.com/docs/5.2/customize/optimize/)
+[![late & pre styles](https://i.ibb.co/RCczdbT/late-and-pre-styles.webp)](https://i.ibb.co/RCczdbT/late-and-pre-styles.webp)
 
-![bootstrap.scss](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/yzhxbnqpq1dafn3wbnfv.png)
+If the `.gif` is not clear, that's the content of the two files (`styles.scss` is completely empty):
 
-ℹ️ **Note** : you can import all of `bootstrap` if you you want to, later I'll explain how we can remove unused CSS using `PurgeCSS`.
+[![late & pre styles](https://i.ibb.co/s1rr4rQ/pre-late-styles.webp)](https://i.ibb.co/s1rr4rQ/pre-late-styles.webp)
 
-And I did the same thing with `SwiperJs`, `Animations`, and my custom CSS
+**ℹ Note:** Instead of importing the entire Bootstrap library, **you can** import only the specific [components that you need](https://getbootstrap.com/docs/5.3/customize/optimize/).
 
-![css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/0k804239jyijuinjw2b1.png)
+Now, I need to **preload** `pre_styles.scss` & **lazy load** `late_styles.scss`.
 
-Next, I created a file named `combined.scss` and imported all the SCSS files I just created
+#### 1. Preloading critical styles
 
-![combined.scss](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l5n0vyts1isc08lc9hza.png)
+Just like we did before when we **[lazy loaded third-party libraries javascript](#1-lazy-loading-third-party-libraries)**, we need to tell angular to load `pre_styles.scss` **as a separate file** during the build and **not inject it**, so we can **preload** it.
 
-To clarify more, that's the list of files :
-
-![list](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nsu09hr20zaeds58twcw.png)
-
-ℹ️ **Note** : `don't forget to remove the old imported CSS, ex : don't import Bootstrap on both styles.scss and combined.scss`.
-
-After that, I jumped to angular.json, and under `styles[]` :
+Inside `angular.json`, under the `styles[]` array, we remove the default value :
 
 ```json
-{
-  "projects": {
-    "app": {
-      "architect": {
-        "build": {
-          "options": {
-            "styles": []
-          }
-        }
-      }
+// angular.json
+"styles": ["src/styles.scss"],
+```
+
+and change it to :
+
+```json
+// angular.json
+  "styles": [
+    {
+      "input": "src/pre_styles.scss",
+      "inject": false
+    },
+    {
+      "input": "src/late_styles.scss", // <- we will use it later.
+      "inject": false
     }
-  }
-}
+  ]
 ```
 
-I added the following :
+[![angular.json separate file](https://i.ibb.co/Y2fY9RK/angular-json-pre-and-late-styles-10fps.webp)](https://i.ibb.co/Y2fY9RK/angular-json-pre-and-late-styles-10fps.webp)
 
-```json
-{
-  "input": "[YourPath]/combined.scss",
-  "inject": false,
-  "bundleName": "combined"
-}
-```
+After we build, we can locate our two files, `pre_styles.scss` and `late_styles.scss`, inside the `dist/` folder.
 
-![angular.json](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/l6d4w11m5pf5ng2nul08.png)
+[![styles](https://i.ibb.co/g4kDvFJ/ls-la.webp)](https://i.ibb.co/g4kDvFJ/ls-la.webp)
 
-Then, I opened my `index.html` and added the code below on the top of the `<head>` tag
+Now, in order to **preload** `pre_styles.scss`, we add the following code inside the `<head>` element of `src/index.html`:
 
 ```html
 <!-- index.html -->
-<link rel="preload" href="combined.css" as="style" />
-<link rel="stylesheet" href="combined.css" />
+<head>
+  ...
+  <link rel="preload" href="pre_styles.css" as="style" />
+  <link rel="stylesheet" href="pre_styles.css" />
+</head>
 ```
 
-![index.html](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4bmije5bm3311pkgdbjt.png)
+[![preload styles](https://i.ibb.co/Pw2gLrQ/pre-styles.webp)](https://i.ibb.co/Pw2gLrQ/pre-styles.webp)
 
-What I've done here, is that the second a user visits the website, the first resource to be added to the download queue is `combined.scss`, this means the browser will start downloading my website resources with `combined.scss` on the top of the list, thus when Angular starts printing, the critical CSS are already loaded and ready to use.
+What I've done here is **prioritize** the loading of `pre_styles.css` as the **first resource** in the download queue. This means the browser will start downloading the website resources with `pre_styles.css` at the **top of the list** so that when `Angular` starts rendering, the `critical styles` are already loaded and ready.
 
-![Preload](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/wggvvo3163xz9yte66xo.png)
+You can read more about `rel=preload` : [https://developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/preload)
 
-Source : [https://developer.mozilla.org](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/preload)
+#### 2. Lazy loading non-critical styles
 
-#### Bundle size
+In the previous step, we **already** told angular to load `late_styles.scss` **as a separate file**, it's time to use it.
 
-![Bundle size](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ptvymr00nh00n14ucpvi.png)
+Within the `ngAfterContentInit()` method of `app.component.ts`, **we define a new function** named `appendStyle()` below the `appendScript()` function that we created earlier :
 
-After building, I had this `Lazy Chunk Files` section, with my `combined.css` file there, in reality, I'm preloading, not lazy loading it.
+```typescript
+// app.component.ts
+ngAfterContentInit() {
+  //...
+  function appendScript() {
+    //...
+  }
+  function appendStyle(name: string) {
+    let style = document.createElement("link");
+    style.rel = "stylesheet";
+    style.type = "text/css";
+    style.href = name;
+    document.head.appendChild(style);
+  }
+}
 
-You can also notice that the size of `styles.css` dropped significantly
+```
 
-Now, thanks to `PurgeCSS`, I'll try to reduce the size of `combined.css` by removing unused CSS.
+Now, we use `appendStyle()` function to **lazy load** `late_styles.scss` by calling it within the `window.onload` event :
 
----
+```typescript
+// app.component.ts
+  ngAfterContentInit() {
+    //...
+    window.onload = () => {
+      //...
+      appendStyle('late_styles.css');
+    };
+  }
+```
 
-#### Installing PurgeCSS
+[![lazy loading styles](https://i.ibb.co/rkZjGtv/lazy-styles.webp)](https://i.ibb.co/rkZjGtv/lazy-styles.webp)
 
-On my command prompt :
+**ℹ A reminder:** The `window.onload` event is fired when the entire website loads.
+
+Now, we restart the server and observe :
+
+[![order of resources](https://i.ibb.co/2nrGsgP/pre-and-late-styles-loading-order.webp)](https://i.ibb.co/2nrGsgP/pre-and-late-styles-loading-order.webp)
+
+We can see that `pre_styles.css` is the **first file to load**, providing all the `critical styles` necessary for `Angular` to begin rendering, eliminating the broken website look.
+
+`late_styles.css` is among the **last files to load**, making room for more `critical styles` to load faster.
+
+✅ We completed our task, and **[Visual Problem 1](#11-visual-problem-1)** is now fixed.
+
+❗ However, we may have a tiny problem :
+
+[![large file size](https://i.ibb.co/hZnrJ9p/large-pre-styles.webp)](ttps://i.ibb.co/hZnrJ9p/large-pre-styles.webp)
+
+`pre_styles.css` **is quite large**, and a significant portion of it contains **dead code that is never used**. This is mainly because we imported the entire `Bootstrap` library instead of [selectively importing the required components](https://getbootstrap.com/docs/5.3/customize/optimize/).
+
+✅ Using `purgeCSS`, we can eliminate all the unused code and optimize the performance further.
+
+#### 3. Installing PurgeCSS
+
+On the command prompt :
 
 ```shell
 # command prompt
 npm i -D purgecss
 ```
 
-After that, I created a file named `purgecss.config.js` on the root of my project.
-
-![purgecss.config.js](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/iq48tqt94kbub9wtdu8q.png)
-
-And inside it I have the following lines :
+Now, we create a new file named `purgecss.config.js` on the root of the project, and add the following code :
 
 ```javascript
 // purgecss.config.js
@@ -317,14 +387,22 @@ module.exports = {
   css: ["./dist/**/combined.css"],
   output: "./dist/[FOLDER]/combined.css",
   safelist: [/^swiper/],
-}
+};
 ```
 
-ℹ **Note** : Remember to replace `[FOLDER]` (within the `output` property).
+**⚠ Note**: Replace `[FOLDER]` with your app name (within the `output` property).
 
-ℹ **Note** : you may notice that I have set `safelist` to `[/^swiper/]`, That's because I don't want `PurgeCSS` to remove any `SwiperJS` CSS. Because `SwiperJS` will add some CSS classes **after** the page execution, thus `PurgeCSS` can't know about them, and end up removing them.
+[![purgeCSS with angular](https://i.ibb.co/FB6HCNq/purgecss.webp)](https://i.ibb.co/FB6HCNq/purgecss.webp)
 
-Next, I opened `package.json`, and edited `build` from :
+**ℹ Note**: You may have noticed that I have set the `safelist` to `[/^swiper/]`. This is because I want to prevent `PurgeCSS` **from removing any CSS related** to `SwiperJS`. Since `SwiperJS` adds CSS classes dynamically after the page load, `PurgeCSS` may not be aware of them and could mistakenly remove them.
+
+Next, we navigate to `package.json` and create a new script named `purgecss` :
+
+```json
+"purgecss": "purgecss -c purgecss.config.js",
+```
+
+Then, we edit the `build` script from :
 
 ```json
 "build": "ng build"
@@ -336,217 +414,235 @@ To :
  "build": "ng build && npm run purgecss "
 ```
 
-Then I created a new script named `purgecss` :
+[![package.json](https://i.ibb.co/MCnVRBj/package.webp)](https://i.ibb.co/MCnVRBj/package.webp)
 
-```json
-"purgecss": "purgecss -c purgecss.config.js",
-```
+**⚠️ Note:** Build using `npm run build` instead of `ng build`, so `purgecss` script kicks in.
 
-To clarify, that's how `package.json` should look like
+After building, the size of `pre_styles.css` dropped by (**190.6 kB**) :
 
-![package.json](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/01ve8rcyuq56ufw7p8j7.png)
-
-⚠️ **Note :**
-
-To build, use `npm run build` instead of `ng build`, So `PurgeCSS` can kick in.
-
-#### Result after solving [Visual problem 1](#11-visual-problem-1)
-
-{% youtube GwYeVFMVg-0 %}
-
-Before and after using `PurgeCSS` on `combined.css` :
-
-![combined.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bfq6ehn1jgsciqqjmkdh.png)
-
-Now, let's take a look on the loading tree :
-
-![loading tree](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/15xooljalwy575bnsq2c.png)
-
-Like I explained before, `combined.css` is now the first file on the download queue.
-The downside of this method is that now we have two stylesheets (styles.css & combined.css), this means one more request to the server, and a couple of milliseconds wasted. Later I'll explain how I fixed this small issue.
+[![pre_styles.css purged](https://i.ibb.co/4Ss4zXf/purged-pre-styles.webp)](https://i.ibb.co/4Ss4zXf/purged-pre-styles.webp)
 
 #### Lighthouse
 
-![Lighthouse](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8ev5vxidl93qzkf0d5o7.png)
+[![Lighthouse 22](https://i.ibb.co/dpyxvSF/lighthouse-2.webp)](https://i.ibb.co/dpyxvSF/lighthouse-2.webp)
 
-Even if lighthouse is telling me : 'your website is perfect', he is not 100% correct,
-What about the [Visual problem 2 & 3](#12-visual-problem-2-amp-3) & all the invisible problems?
+The **CLS** (Cumulative Layout Shift) has decreased, because, as expected, we fixed **[Visual Problem 1](#11-visual-problem-1)**. However, **LCP** (largest Contentful paint) is still poor, because the `pizza picture` is always `late` to the party, AKA **[Visual Problems 2 & 3](#12-visual-problem-2-amp-3)**.
 
-ℹ **Note** : [The website after this method](https://megapizza-angular-etb14gx4o-oubrdb.vercel.app/)
+[![bad LCP](https://i.ibb.co/zPkLXny/LCP.webp)](https://i.ibb.co/zPkLXny/LCP.webp)
+
+▶ Visit the [website](https://megapizza-v3-3ndn8z08x-brihoum.vercel.app/) after this step :
+
+[![website](https://img.shields.io/badge/Vercel-Visit%20the%20website-green?style=for-the-badge&logo=vercel)](https://megapizza-v3-3ndn8z08x-brihoum.vercel.app/)
 
 ---
 
-### Explaining [Visual problem 2 & 3](#12-visual-problem-2-amp-3)
+### Explaining [Visual Problems 2 & 3](#12-visual-problem-2-amp-3)
 
-The cause of this problem, is the loading tree, or the order of the resources in the download queue.
-Like you maybe already know, browsers have a limit of parallel requests.
+The cause of this problem is the **order** of resources in the download queue.
+As you may already know, browsers have a limit on the number of parallel requests.
 
-![Chrome limit](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3nrvkk7t5fafn59qq12e.png)
+[![Chrome limit of requests](https://i.ibb.co/wJW14x5/limit-of-requests-2.webp)](https://i.ibb.co/wJW14x5/limit-of-requests-2.webp)
 
-![Loading tree](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/412ucweumviaukm8b935.png)
-Source : [blog.bluetriangle.com](https://blog.bluetriangle.com/blocking-web-performance-villain)
+Source: [blog.bluetriangle.com](https://blog.bluetriangle.com/blocking-web-performance-villain)
 
-Because of that, I need to prioritize my resources. In other words, I need the font & the pizza picture downloaded before other low-priority resources.
+Given this limitation, we must **prioritize** the **order** in which resources are loaded, making sure to load **high-priority** resources like the `font` and `pizza picture` before the lower-priority ones
 
-![loading tree](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ulelhddwy8ahuvahsj1d.png)
+### Solving [Visual Problems 2 & 3](#12-visual-problem-2-amp-3)
 
-### Solving [Visual problem 2 & 3](#12-visual-problem-2-amp-3)
+This issue can be easily resolved by **preloading** the `font` and the `pizza picture`, as we did earlier.
 
-This problem is easy to fix, all I need is to preload (like we did earlier) the font, and the pizza picture.
-
-We start with the font, but first, I need to know the name of the font i used on the first page (`DayburyRegular`), after that, inside the `<head>` of my `index.html` I need to add :
+Inside the `<head>` element of `src/index.html`, we add the following code :
 
 ```html
 <!-- index.html -->
-<link
-  rel="preload"
-  href="[YourPath]/DayburyRegular.woff2"
-  as="font"
-  type="font/woff2"
-  crossorigin
-/>
+<head>
+  ...
+  <link rel="preload" href="[YourPath]/pizza.webp" as="image" />
+</head>
 ```
 
-The same process goes for the pizza picture, so inside the `<head>` of `index.html` I also need to add :
+And we follow the same procedure with **the font used on the home page** (`DayburyRegular.woff2`) :
 
 ```html
 <!-- index.html -->
-<link rel="preload" href="[YourPath]/pizza.webp" as="image" />
+<head>
+  ...
+  <link
+    rel="preload"
+    href="[YourPath]/DayburyRegular.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+</head>
 ```
 
-It should look like this :
+[![index.html](https://i.ibb.co/HVr2SD0/pre-font.webp)](https://i.ibb.co/HVr2SD0/pre-font.webp)
 
-![index.html](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lknnvxda2q12ja4ikl8v.png)
+**⚠ Note:** The use of `crossorigin` here is important.
 
-⚠️ **Note :**
+Now, I need to transfer my `font` from `fonts.css` to `pre_styles.scss`
 
-Go to the CSS file containing your `@font-face` :
+[![font](https://i.ibb.co/RYBzL3j/font.webp)](https://i.ibb.co/RYBzL3j/font.webp)
 
-![fonts.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/uy7j4j2ly5md1yct6str.png)
+**⚠️ Note:** Make sure to use the correct path for the font `src` when transferring it.
 
-If the path of your font is different from the path you put on your index.html, change it to the same as index.html, **Even if they lead to the same file**, they must be written the same.
+[![load](https://i.ibb.co/pyCRbHn/correct-loading.webp)](https://i.ibb.co/pyCRbHn/correct-loading.webp)
 
-![fonts.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/s38n3g958h8j79nwz24y.png)
+✅ The task has been completed and the issue causing **[Visual Problems 2 & 3](#12-visual-problem-2-amp-3)** has been resolved. This means no more delays in loading the `font` or the `pizza picture`.
 
-Otherwise the browser will re-download the font (and i don't know why).
+▶ Visit the [website](https://megapizza-v3-git-unoptimizedversiondevto-brihoum.vercel.app/) after this step :
 
-![Fonts](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/njuq3joamhksey2931a3.png)
-
-Now, I created a file named `pre-fonts.scss`, and inside it, I transferred my font from its old SCSS file to this newly created one.
-
-![fonts](https://res.cloudinary.com/practicaldev/image/fetch/s--dyTHLs7B--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://im2.ezgif.com/tmp/ezgif-2-6d3e1da4f5.webp)
-
-After that, I imported `pre-fonts.scss` into `combined.scss`, so its preloads with the other styles.
-
-![combined.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4johjal46iz7yvxpxc4e.png)
-
-#### Result after solving [Visual problem 2 & 3](#12-visual-problem-2-amp-3)
-
-![Download tree](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ar00bf6o4ned8qgmpdim.png)
-
-Now, the font and pizza picture won't get late to the party again.
-
-ℹ **Note** : [The website after the fix](https://megapizza-angular-ckx3ks30t-oubrdb.vercel.app/)
+[![website](https://img.shields.io/badge/Vercel-Visit%20the%20website-green?style=for-the-badge&logo=vercel)](https://megapizza-v3-git-unoptimizedversiondevto-brihoum.vercel.app/)
 
 ---
 
-### Explaining [Visual problem 4](#13-visual-problem-4)
+### Explaining [Invisible Problem 1](#21-invisible-problem-1)
 
-{% youtube KcdA-BH_IF0 %}
+This issue occurs because the website **loads all its resources** from pages 1 to 5, even those that are **not necessary**.
+Ideally, we should **only load** resources that are **currently visible** in the viewport and **postpone** the loading of the remaining resources until we **scroll to them**.
+By following this approach, we **accelerate** the loading time of the visible resources by **reducing** the number of files that need to be downloaded initially.
 
-Like I explained on the video, when we lazy load resources that are not visible on the viewport, the other resources (that are visible) will load faster, because now we are downloading for example 10 images, instead of 100.
+**ℹ️ TL;DR:** We should only load resources that are visible on the screen.
 
-ℹ️ TL;DR : We only need to load pictures that are actually needed and visible.
+### Solving [Invisible Problem 1](#21-invisible-problem-1)
 
-### Solving [Visual problem 4](#13-visual-problem-4)
+The solution to this issue is to use a library that **loads only the visible resources and lazy loads the rest**. My personal choice would be [lazysizes](https://github.com/aFarkas/lazysizes) By Alexander Farkas.
 
-The solution is to implement `Lazy Loading`. There are many methods and techniques, but my personal choice is to go with [lazysizes](https://github.com/aFarkas/lazysizes) By Alexander Farkas.
-
----
-
-But before, because we have all our critical CSS inside `combined.css`, let's take a look at my `styles.css`
-
-![styles.css](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jst3vdxj177zj5t47sof.png)
-
-Poor file, looks so empty.
-Since all the CSS inside this file are noncritical, why not just lazy load them with the same method I used when I [**Lazy loaded LightGallery**](#11-lazy-load-lightgallery).
-
-So, inside `angular.json`, under `styles[]` I need to modify :
-
-```json
-"styles": [
-    {
-      "src/styles.scss"
-    }
-]
-```
-
-to
-
-```json
-"styles": [
-    {
-      "input": "src/styles.scss",
-      "inject": false,
-      "bundleName": "styles"
-    }
-]
-```
-
-![angular.json](https://res.cloudinary.com/practicaldev/image/fetch/s--fBFq9CP8--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://im2.ezgif.com/tmp/ezgif-2-5e61b04435.webp)
-
-Now, I need to to load `styles.css` after all the resources finished downloading ( like I did when I [**Lazy loaded LightGallery**](#11-lazy-load-lightgallery))
-
-So, inside `main.component.ts`, under `ngAfterContentInit()` and within `window.onload` I added :
-
-```javascript
-var link = document.createElement("link")
-link.rel = "stylesheet"
-link.type = "text/css"
-link.href = "styles.css"
-document.head.appendChild(link)
-```
-
-![main.ts](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/00cwz3x016ab6fzbfwcs.png)
+I would be happy to explain how I implemented `lazy loading` on my website using [lazysizes](https://github.com/aFarkas/lazysizes), but this post is already long enough and that's not the primary focus for today. Instead, **I will jump directly to the results**. However, I am planning to create a detailed guide with step-by-step instructions, which I will link here for reference.
 
 ---
 
-Now let's get back to the problem. I would be very pleased to explain to you how I lazy loaded my website, but this post is already long enough, plus, that's not the main subject for today. So I'll jump directly to the results, however, I'm planning on writing a detailed step by step guide, and link it right here.
+I implemented `lazy loading` for all the pictures and backgrounds on the website. The image below shows the difference before and after the implementation :
 
-#### Result after solving [Visual problem 4](#13-visual-problem-4)
+[![dev tools 2](https://i.ibb.co/q9RfdHw/dev-tools-2.webp)](https://i.ibb.co/q9RfdHw/dev-tools-2.webp)
 
-{% youtube OtTsIw_v7Sg %}
+✅ The website made only `49` requests initially, transferred `1.1 MB` of resources, and loaded all of them in just `1.28s`.
 
-![result](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/b1eg60msnxw7c40x16ix.png)
+**ℹ Note:** The results mentioned above were achieved without utilizing the browser cache as it was disabled during the test.
 
-#### Lighthouse
+And by caching the resources, the load time can be reduced to a maximum of ~ `0.5s`.
 
-![Lighthouse](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7c5zjgrlyiq1opphj5nw.png)
+[![dev tools 2 - cache](https://i.ibb.co/CtHnmW8/dev-tools-cache.webp)](https://i.ibb.co/CtHnmW8/dev-tools-cache.webp)
 
-Mission accomplished ✅
+Now, resources will be loaded as we scroll to them :
 
-ℹ️ **Note :** While fixing my visual problems, all the invisible problems are solved too :
+[![load on scroll](https://i.ibb.co/37NVWKX/load-on-scroll.webp)](https://i.ibb.co/37NVWKX/load-on-scroll.webp)
 
-- [Invisible problem 1](#21-invisible-problem-1) was fixed when we solved [Visual problem 4](#solving-visual-problem-4), (when I lazy loaded the website with `lazysizes`)
+✅ The issue causing **[Invisible Problem 1](#21-invisible-problem-1)** has been successfully resolved.
 
-- [Invisible problem 2](#22-invisible-problem-2) was fixed when we solved [Visual problem 2 & 3](#solving-visual-problem-2-amp-3) (when I preloaded the font, and the pizza picture)
+▶ Visit the [website](https://megapizza-v3-qastti5tm-brihoum.vercel.app/) after this step :
 
-You can visit the [website](https://megapizza-angular-d1qw82z6o-oubrdb.vercel.app/) after this last step.
+[![website](https://img.shields.io/badge/Vercel-Visit%20the%20website-green?style=for-the-badge&logo=vercel)](https://megapizza-v3-qastti5tm-brihoum.vercel.app/)
 
-## The Take
+#### Lighthouse score
 
-- When your website starts printing, make sure that all of your critical CSS is ready.
+[![Lighthouse](https://i.ibb.co/cy4GsH0/lighthouse-3.webp)](https://i.ibb.co/cy4GsH0/lighthouse-3.webp)
 
-- If necessary, preload some of your resources (the main ones), for a better UX (like we did with the pizza picture & the font).
+[![Lighthouse report badge](https://img.shields.io/badge/lighthouse-view%20report-blue?style=for-the-badge&logo=lighthouse)](https://googlechrome.github.io/lighthouse/viewer/?gist=58ba19c693d8313bd2d4d486f6505e09)
 
-- Always, like always lazy load your images, and if possible, lazy load your uncritical JS & CSS.
+Mission accomplished ✅.
 
-- Try to install the minimum of third-party libraries, and uninstall the unused ones.
+The load is fast as ⚡.
 
-- Always open your dev-console, and analyze and prioritize the order of your resources.
+ℹ️ **Note:** [Invisible Problem 2](#22-invisible-problem-2) was also resolved when we fixed the [Visual Problems 2 & 3](#solving-visual-problem-2-amp-3) issues.
+
+### MORE SPEED!
+
+What if I told you we can **reduce** the bundle size **even more** and **enhance** the already impeccable `Lighthouse` score ❓
+
+✳ The method I'm about to show you will allow us to initially **load only the first visible page**, and then **lazy load** the remaining pages afterward.
+
+This means that instead of loading the entire website, we only load the first page component, resulting in a **smaller initial page size** and faster loading speed.
+
+**ℹ️ TL;DR:** We only **load components** that are currently in view, and **lazy load** the remaining.
+
+**⚠ Note:** Keep in mind this method comes with several downsides.
 
 ---
 
-You may find mistakes related to my English, maybe I was wrong about some of the things I said, or the way I explained them. Your suggestions and advices are always more than welcome.
+To start, Inside my `app.component.ts`, I need to remove all `pages` except for `page 1` from **rendering**, meaning only `page 1` can be loaded and displayed.
 
-ℹ️ **Note :** I tried to be beginner friendly as possible, which is why you find me a little repetitive and boring in some cases.
+After that, I need to add a new `<ng-container>` and declare a `template Variable` named `#injectHere` inside it.
+
+[![lazy load components](https://i.ibb.co/k3NkccD/remove-all-pages.webp)](https://i.ibb.co/k3NkccD/remove-all-pages.webp)
+
+Next, in order to access `<ng-container>`, we declare the following :
+
+```typescript
+@ViewChild('injectHere', { read: ViewContainerRef }) injectHere!: ViewContainerRef;
+```
+
+And below, we define a new method that will be responsible for loading the remaining components :
+
+```typescript
+  async loadComponents() {
+    const { Page2Component } = await import('./components/page2/page2.component');
+    this.injectHere.createComponent(Page2Component);
+    const { Page3Component } = await import('./components/page3/page3.component');
+    this.injectHere.createComponent(Page3Component);
+    const { Page4Component } = await import('./components/page4/page4.component');
+    this.injectHere.createComponent(Page4Component);
+    const { Page5Component } = await import('./components/page5/page5.component');
+    this.injectHere.createComponent(Page5Component);
+  }
+```
+
+Now, we need to call this method. In my opinion, it is better to wait for page 1 to fully load before loading the remaining components to ensure a faster initial loading speed. To achieve this, we call the method under the `window.onload` event :
+
+```typescript
+window.onload = async () => {
+  await this.loadComponents();
+  //...
+};
+```
+
+**ℹ Note:** `loadComponents()` is _asynchronous_ and should be awaited before proceeding further.
+
+[![lazy-load-components](https://i.ibb.co/yXcTKPy/lazy-load-components.webp)](https://i.ibb.co/yXcTKPy/lazy-load-components.webp)
+
+And if we open the dev-console :
+
+[![angular lazy load components](https://i.ibb.co/J5TQc2P/lazy-load-components.webp)](https://i.ibb.co/J5TQc2P/lazy-load-components.webp)
+
+▶ Visit the [website](https://megapizza-v3-r9p12zc31-brihoum.vercel.app/) after this step :
+
+[![website](https://img.shields.io/badge/Vercel-Visit%20the%20website-green?style=for-the-badge&logo=vercel)](https://megapizza-v3-r9p12zc31-brihoum.vercel.app/)
+
+#### Bundle size
+
+[![bundle size](https://i.ibb.co/JFnmdc1/build-3.webp)](https://i.ibb.co/JFnmdc1/build-3.webp)
+
+✅ The main bundle size was reduced by (**83.29 kB**), resulting in a faster loading time and quicker display of page 1.
+
+#### Lighthouse Score
+
+[![lighthouse score](https://i.ibb.co/4ptV9H4/lighthouse-4.webp)](https://i.ibb.co/4ptV9H4/lighthouse-4.webp)
+
+[![Lighthouse report badge](https://img.shields.io/badge/lighthouse-view%20report-blue?style=for-the-badge&logo=lighthouse)](https://googlechrome.github.io/lighthouse/viewer/?gist=4ebba9250e9b7e950151e9cf8c6232cb)
+
+We have achieved a slight improvement by gaining some milliseconds and completely eliminating the blocking time.
+
+---
+
+## The Takeaways
+
+- Make sure that all of your **critical styles are ready** when your website starts rendering.
+
+- If necessary, **preload** some of your main resources, like we did with the `pizza picture` and the `font`.
+
+- Always, like always **lazy load** your images, and if possible, lazy load your **non-critical** JS & CSS.
+
+- Install the minimum required third-party libraries and uninstall any unused ones.
+
+- Always open your dev console, analyze and prioritize the order of your resources.
+
+---
+
+If you have suggestions or advice regarding the information I shared, please don't hesitate to let me know. Your feedback is always welcome.
+
+I aimed to explain everything in a beginner-friendly way, which may have led to some repetition.
+
+You can find the website's source code on `Github` if you're interested:
+
+[![MegaPizza Github](https://img.shields.io/badge/github-view%20on%20github-blue?style=for-the-badge&logo=github)](https://github.com/aBrihoum/megapizza_website)
